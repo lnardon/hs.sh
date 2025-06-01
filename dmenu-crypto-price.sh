@@ -1,10 +1,7 @@
 #!/bin/bash
 
-coin=$(echo "" | dmenu -p "Enter crypto coin name (e.g. bitcoin):")
-if [[ -z "$coin" ]]; then
-  notify-send "Crypto Info" "No coin name entered."
-  exit 1
-fi
+coin=$(dmenu -p "Enter crypto coin name (e.g. bitcoin):")
+[[ -z "$coin" ]] && notify-send "Crypto Info" "No coin name entered." && exit 1
 
 url="https://api.coingecko.com/api/v3/coins/$coin"
 response=$(curl -s "$url")
@@ -16,7 +13,6 @@ price_usd=$(printf "%'.2f" "$price_usd_raw")
 change_14h=$(echo "$response" | jq -r '.market_data.price_change_percentage_24h')
 img_url=$(echo "$response" | jq -r '.image.small')
 msg="Price: \$${price_usd} \n24h Change: ${change_14h}%"
-
 tmp_img=$(mktemp --suffix=.png)
 curl -s -o "$tmp_img" "$img_url"
 
