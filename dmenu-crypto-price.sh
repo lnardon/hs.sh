@@ -18,9 +18,12 @@ coin_name=$(echo "$response" | jq -r '.name')
 price_usd_raw=$(echo "$response" | jq -r '.market_data.current_price.usd')
 price_usd=$(printf "%'.2f" "$price_usd_raw")
 change_14h=$(echo "$response" | jq -r '.market_data.price_change_percentage_24h')
-msg="Name: $coin_name
-     Price: \$${price_usd}
-     24h Change: ${change_14h}%"
+img_url=$(echo "$response" | jq -r '.image.small')
+msg="Name: $coin_name \nPrice: \$${price_usd} \n24h Change: ${change_14h}%"
 
-notify-send "Crypto Info" "$msg"
+tmp_img=$(mktemp --suffix=.png)
+curl -s -o "$tmp_img" "$img_url"
 
+notify-send -i "$tmp_img" "Crypto Info" "$msg"
+
+rm "$tmp_img"
