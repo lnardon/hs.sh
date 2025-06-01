@@ -15,7 +15,8 @@ if echo "$response" | jq -e '.error' >/dev/null; then
 fi
 
 coin_name=$(echo "$response" | jq -r '.name')
-price_usd=$(echo "$response" | jq -r '.market_data.current_price.usd')
+price_usd_raw=$(echo "$response" | jq -r '.market_data.current_price.usd')
+price_usd=$(printf "%'.2f" "$price_usd_raw")
 change_14h=$(echo "$response" | jq -r '.market_data.price_change_percentage_24h')
 msg="Name: $coin_name
      Price: \$${price_usd}
